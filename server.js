@@ -7,8 +7,9 @@ const server = Hapi.server({
     port: 8080
 });
 
-const Tags = require('./models/tags');
-let tags = new Tags(server);
+//const Tags = require('./models/tags');
+const TagsController = require('./controller/TagsController');
+let tagsController = new TagsController(server);
 
 async function start() {
 
