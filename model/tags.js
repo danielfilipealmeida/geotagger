@@ -1,26 +1,24 @@
 /**
- * TagController Module
+ * Deprecated code.
+ * To be removed soon!
  * 
- * Implements a controller for handling requests related to Tags. 
- * The following is done here:
- *  - GET and POST tags endpoint for search and insertions of tags
- * 
- * @module controller/TagsController
+ * TODO: remove this
  */
 
-const TagsRepository = require('../model/repository/TagsRepository');
+var Datastore = require('nedb');
+const util = require('util');
 
-
-module.exports = class TagsController {
+module.exports = class Tag {
     constructor(server)
     {
         this.server = server;
         this.root = '/tags'
-        this.repository = new TagsRepository();
-        
+        this.db = new Datastore({filename: 'Tags'});
+        this.db.loadDatabase();        
+
         this.createRoutes();
     }
-    
+
     /**
      * Creates all routes for the Tags model
      */
@@ -46,16 +44,16 @@ module.exports = class TagsController {
      */
     async handleGET(request, h) 
     {
-       let records = [];
+        let records = [];
 
         try {
-            records = await this.repository.search({});
+            records = await this.findTags({});
         }
         catch (err) {
             console.log(err);
             return {
                 'error': true,
-                'message': err.message
+                'message': error
             }
         }
 
@@ -78,20 +76,53 @@ module.exports = class TagsController {
 
         let newDocument;
         try {
-            newDocument = await this.repository.insert(document);
+            newDocument = await this.insertTag(document);
         }
         catch (err) {
             return {
                 error: true,
-                message: err.message
+                message: err
             };
         }
-
+     
         return {
             error: false, 
             message: 'Tag added',
             newDocument: newDocument
         };
+    }
+
+    /**
+     * get Tags by search condition
+     * @param {*} condition 
+     */
+    async findTags(condition)
+    {
+        let promise = new Promise(function(resolve, reject) {
+                this.db.find(condition, function(err, records) {
+                    if (err) {
+                        reject(err);
+                        return;
+                    }
+    
+                    resolve(records);
+                });
+            }.bind(this));
+    
+        return await promise;
+    }
+
+    /**
+     * Returns a promisified insert of a tag
+     * @param {object} tag
+     */
+    async insertTag(tag)
+    {
+        return await new Promise((resolve) => {
+            this.db.insert(tag, (err, newTag)=> {
+                resolve(newTag)
+            })
+        });
     }
 
 }
