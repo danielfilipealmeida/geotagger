@@ -26,7 +26,10 @@ const resolvers = (models) => ({
          * @returns 
          */
         getAllTags(root) {
-            return models.tagsRepository.search({}).then((response) => response)
+            return models.tagsRepository.all()
+            .then((response) => {
+                return response.map(record => record.value)
+            });
         },
 
         /**

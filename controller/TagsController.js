@@ -10,7 +10,6 @@
 
 const TagsRepository = require('../model/repository/TagsRepository');
 
-
 module.exports = class TagsController {
     constructor(server)
     {
@@ -48,11 +47,11 @@ module.exports = class TagsController {
     {
        let records = [];
 
+       
         try {
-            records = await this.repository.search({});
+            records = await this.repository.all();
         }
         catch (err) {
-            console.log(err);
             return {
                 'error': true,
                 'message': err.message

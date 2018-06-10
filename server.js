@@ -14,7 +14,7 @@ const server = Hapi.server({
 const TagsRepository = require('./model/repository/TagsRepository');
 const tagsRepository = new TagsRepository();
 const TagsController = require('./controller/TagsController');
-let tagsController = new TagsController(server);
+const tagsController = new TagsController(server);
 const executableSchema = makeExecutableSchema({
     typeDefs: [graphqlSchema],
     resolvers: createResolvers({tagsRepository})
@@ -44,6 +44,7 @@ async function start() {
             }
         }
     });
+
 
     try {
         await server.start();
