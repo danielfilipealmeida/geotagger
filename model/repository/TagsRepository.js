@@ -60,12 +60,14 @@ module.exports = class TagsRepository {
     }
 
     /**
-     * Fetch all Tags with the given condition.
-     * TODO!!!
+     * Fetch all Tags of a type
      * @param {*} searchCondition 
      */
-    async search(searchCondition) {
-        let url = `${this.url}:${this.port}/${this.database}/_all_docs`;
+    async getByType(type) {
+        if (['image', 'text', 'sound'].indexOf(type) < 0) {
+            throw new Error('Invalid type');
+        }
+        let url = `${this.url}:${this.port}/${this.database}/_design/views/_view/by_type?key="${type}"`;
         return axios.get(
             url
         )

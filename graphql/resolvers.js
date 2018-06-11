@@ -13,8 +13,8 @@ const resolvers = (models) => ({
          * @param {any} {id} 
          * @returns 
          */
-        getTagById(root, {id}) {
-            return models.tagsRepository.search({'_id': id}).then((response) => {
+        getTagById(root, { id }) {
+            return models.tagsRepository.search({ '_id': id }).then((response) => {
                 return response[0];
             })
         },
@@ -27,9 +27,9 @@ const resolvers = (models) => ({
          */
         getAllTags(root) {
             return models.tagsRepository.all()
-            .then((response) => {
-                return response.map(record => record.value)
-            });
+                .then((response) => {
+                    return response.map(record => record.value)
+                });
         },
 
         /**
@@ -39,9 +39,11 @@ const resolvers = (models) => ({
          * @param {any} {type} 
          * @returns 
          */
-        getTagsByType(root, {type}) {
-            return models.tagsRepository.search({type: type})
-                .then((response) => response)
+        getTagsByType(root, { type }) {
+            return models.tagsRepository.getByType(type)
+                .then((response) => {
+                    return response.map(record => record.value)
+                });
         },
 
         /**
@@ -51,8 +53,21 @@ const resolvers = (models) => ({
          * @returns 
          */
         getImageTags(root) {
-            return models.tagsRepository.search({type: 'image'})
-                .then((response) => response)
+            return models.tagsRepository.getByType('image')
+                .then((response) => {
+                    return response.map(record => record.value)
+                });
+        },
+
+        /**
+         * Return all text
+         * @param {*} root 
+         */
+        getTextTags(root) {
+            return models.tagsRepository.getByType('text')
+                .then((response) => {
+                    return response.map(record => record.value)
+                });
         }
     },
 
@@ -61,7 +76,7 @@ const resolvers = (models) => ({
      * Set the Mutations
      */
     Mutation: {
-        
+
         /**
          * Creates an image Tag
          * 
@@ -76,7 +91,39 @@ const resolvers = (models) => ({
                 longitude: args.longitude,
                 data: args.data
             };
-        
+
+            return models.tagsRepository.insert(data).then((newImageTag) => newImageTag)
+        },
+
+        /**
+         * 
+         * @param {*} root 
+         * @param {*} args 
+         */
+        createTextTag(root, args) {
+            let data = {
+                type: 'text',
+                latitude: args.latitude,
+                longitude: args.longitude,
+                data: args.data
+            };
+
+            return models.tagsRepository.insert(data).then((newImageTag) => newImageTag)
+        },
+
+        /**
+         * 
+         * @param {*} root 
+         * @param {*} args 
+         */
+        createSoundTag(root, args) {
+            let data = {
+                type: 'sound',
+                latitude: args.latitude,
+                longitude: args.longitude,
+                data: args.data
+            };
+
             return models.tagsRepository.insert(data).then((newImageTag) => newImageTag)
         }
     }

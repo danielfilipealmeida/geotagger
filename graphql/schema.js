@@ -20,10 +20,13 @@ type Query {
     getAllTags: [Tag]
     getTagsByType(type: String!): [Tag]
     getImageTags: [Tag]
+    getTextTags: [Tag]
 }
 
 type Mutation {
     createImageTag(latitude: Float!, longitude: Float!, data: String!): Tag
+    createTextTag(latitude: Float!, longitude: Float!, data: String!): Tag
+    createSoundTag(latitude: Float!, longitude: Float!, data: String!): Tag
 }
 
 schema {
